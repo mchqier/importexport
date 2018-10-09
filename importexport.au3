@@ -9,6 +9,8 @@
 Global $ImError = 0
 Global $ExError = 0
 $sLogPath = FileOpen(@ScriptDir & "\Importexport.log", 1)
+$sLogMsg = "ImportExport Script Started"
+_FileWriteLog($sLogPath, $sLogMsg)
 Import()
 $Imreact = WinWaitActive("localhost/gfu2014/Import_Controller/ImportForm", "", 3600)
 If $Imreact Then
@@ -22,6 +24,8 @@ Else
 	FileClose($sLogPath)
 	Exit
 EndIf
+$sLogMsg = "ImportExport Script is Finished"
+_FileWriteLog($sLogPath, $sLogMsg)
 FileClose($sLogPath)
 Exit
 
