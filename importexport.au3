@@ -4,28 +4,34 @@
 #include <ScreenCapture.au3>
 #include <GDIPlus.au3>
 #include <WinAPISys.au3>
+#include <File.au3>
 
 Global $ImError = 0
 Global $ExError = 0
+$sLogPath = FileOpen(@ScriptDir & "\Importexport.log", 1)
 Import()
-$Imreact = WinWaitActive("localhost/gfu2014/Import_Controller/ImportForm", "")
+$Imreact = WinWaitActive("localhost/gfu2014/Import_Controller/ImportForm", "", 3600)
 If $Imreact Then
 	Sleep(1000)
 	export()
 Else
 
 ;~ 	mus in log file schreiben
-
+	$sLogMsg = "Import Page returned null , Script will exit"
+	_FileWriteLog($sLogPath, $sLogMsg)
+	FileClose($sLogPath)
 	Exit
 EndIf
+FileClose($sLogPath)
 Exit
 
 
 Func Import()
 
 ;~ 	muss in log file schreiben
-
-	$chromePID = Run("C:\Program Files (x86)\Google\Chrome\Application\chrome.exe")
+	$sLogMsg = "Import function is called"
+	_FileWriteLog($sLogPath, $sLogMsg)
+	$ChromePID = Run("C:\Program Files (x86)\Google\Chrome\Application\chrome.exe")
 	Sleep(500)
 	Send("http://localhost/gfu2014/import?flush=1")
 	Sleep(500)
@@ -41,19 +47,27 @@ Func Import()
 		Send("{enter}")
 
 ;~ 		muss in log file schreiben
+		$sLogMsg = "Import Procces is started"
+		_FileWriteLog($sLogPath, $sLogMsg)
+
+
 
 	Else
 		If $ImError = 3 Then
 
 ;~ 			muss in logfile schreiben
+			$sLogMsg = "ImportPage opening  failed 3 times , Script will exit"
+			_FileWriteLog($sLogPath, $sLogMsg)
 
+			FileClose($sLogPath)
 			Exit
 		Else
-			ProcessClose($chromePID)
+			ProcessClose($ChromePID)
 			$ImError = $ImError + 1
 
 ;~ 			muss in log file schreiben
-
+			$sLogMsg = "ImportPage cant open  Script will try again.....Script tries (" & $ImError & ") times"
+			_FileWriteLog($sLogPath, $sLogMsg)
 			Sleep(500)
 			Import()
 		EndIf
@@ -66,6 +80,8 @@ EndFunc   ;==>Import
 Func export()
 
 ;~ 	mus in log file schreiben
+	$sLogMsg = "Export Function is called"
+	_FileWriteLog($sLogPath, $sLogMsg)
 
 	WinActivate("localhost/gfu2014/Import_Controller/ImportForm")
 	Sleep(500)
@@ -87,18 +103,25 @@ Func export()
 		Send("{enter}")
 
 ;~ 		muss in log file schreiben
+		$sLogMsg = "Export Procces is started"
+		_FileWriteLog($sLogPath, $sLogMsg)
+
 
 	Else
-		If $ExError = 4 Then
+		If $ExError = 3 Then
 
 ;~ 			muss in log file schreiben
+			$sLogMsg = "ExportPage opening  failed 3 times , Script will exit"
+			_FileWriteLog($sLogPath, $sLogMsg)
 
+			FileClose($sLogPath)
 			Exit
 		Else
 			$ExError = $ExError + 1
 
 ;~ 		 muss in logfile schreiben
-
+			$sLogMsg = "ExportPage cant open  Script will try again.....Script tries (" & $ExError & ") times"
+			_FileWriteLog($sLogPath, $sLogMsg)
 			Sleep(500)
 			export()
 		EndIf
