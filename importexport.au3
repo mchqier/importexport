@@ -1,5 +1,7 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=C:\Users\user1\Desktop\favicon.ico
+#AutoIt3Wrapper_Outfile=\\nas00\disk\temp\mothnna\importexport.exe
+#AutoIt3Wrapper_Outfile_x64=importexport.exe
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include <ScreenCapture.au3>
 #include <GDIPlus.au3>
@@ -12,7 +14,7 @@ $sLogPath = FileOpen(@ScriptDir & "\Importexport.log", 1)
 $sLogMsg = "ImportExport Script Started"
 _FileWriteLog($sLogPath, $sLogMsg)
 Import()
-$Imreact = WinWaitActive("localhost/gfu2014/Import_Controller/ImportForm", "", 3600)
+$Imreact = WinWait("localhost/gfu2014/Import_Controller/ImportForm", "", 3600)
 If $Imreact Then
 	Sleep(1000)
 	export()
@@ -35,20 +37,24 @@ Func Import()
 ;~ 	muss in log file schreiben
 	$sLogMsg = "Import function is called"
 	_FileWriteLog($sLogPath, $sLogMsg)
-	$ChromePID = Run("C:\Program Files (x86)\Google\Chrome\Application\chrome.exe")
-	Sleep(500)
-	Send("http://localhost/gfu2014/import?flush=1")
-	Sleep(500)
-	Send("{Enter}")
-	$ImportPage = WinWaitActive("localhost/gfu2014/import?flush=1", "", 30)
-	If $ImportPage Then
+
+
+	$importUrl = "http://localhost/gfu2014/import?flush=1"
+	Run("cmd /c start http://localhost/gfu2014/import?flush=1", "", @SW_HIDE)
+	Sleep(3000)
+
+	Local $hWnd = WinWait("localhost/gfu2014/import?flush=1","",30)
+
+
+
+	If $hWnd Then
 		$i = 30
 		For $i = 29 To 0 Step -1
-			Send("{tab}")
+			ControlSend($hWnd, "", "", "{tab}")
 			Sleep(250)
 		Next
 		Sleep(200)
-		Send("{enter}")
+		ControlSend($hWnd, "", "", "{Enter}")
 
 ;~ 		muss in log file schreiben
 		$sLogMsg = "Import Procces is started"
@@ -60,17 +66,17 @@ Func Import()
 		If $ImError = 3 Then
 
 ;~ 			muss in logfile schreiben
-			$sLogMsg = "ImportPage opening  failed 3 times , Script will exit"
+			$sLogMsg = "Script Failed to open ImportPage 3 times , It will exit"
 			_FileWriteLog($sLogPath, $sLogMsg)
 
 			FileClose($sLogPath)
 			Exit
 		Else
-			ProcessClose($ChromePID)
+			ProcessClose($hWnd)
 			$ImError = $ImError + 1
 
 ;~ 			muss in log file schreiben
-			$sLogMsg = "ImportPage cant open  Script will try again.....Script tries (" & $ImError & ") times"
+			$sLogMsg = "Script can´t open ImportPage IT will try again.....(" & $ImError & ".) times"
 			_FileWriteLog($sLogPath, $sLogMsg)
 			Sleep(500)
 			Import()
@@ -87,24 +93,32 @@ Func export()
 	$sLogMsg = "Export Function is called"
 	_FileWriteLog($sLogPath, $sLogMsg)
 
-	WinActivate("localhost/gfu2014/Import_Controller/ImportForm")
-	Sleep(500)
-	Send("^t")
-	Sleep(500)
-	Send("http://localhost/gfu2014/export?flush=1")
-	Sleep(500)
-	Send("{Enter}")
 
-	$ExportPage = WinWaitActive("Export GFU-Website", "", 30)
-	If $ExportPage Then
+	Run("cmd /c start http://localhost/gfu2014/export?flush=1", "", @SW_HIDE)
+	Sleep(2000)
+
+	Local $hWnd = WinWait("localhost/gfu2014/import?flush=1","",30)
+
+;~ 	$hWnd=WinActivate("localhost/gfu2014/Import_Controller/ImportForm")
+;~ 	Sleep(500)
+;~ 	ControlSend($hWnd, "", "", "^t")
+;~ 	Sleep(500)
+
+;~ 	ControlSend($hWnd, "", "", "http://localhost/gfu2014/export?flush=1")
+;~ 	Sleep(500)
+;~ 	ControlSend($hWnd, "", "", "{Enter}")
+;~
+
+
+	If $hWnd Then
 		Sleep(500)
-		Send("{tab}")
+		ControlSend($hWnd, "", "", "{tab}")
 		Sleep(500)
-		Send("{enter}")
+		ControlSend($hWnd, "", "", "{Enter}")
 		Sleep(500)
-		Send("{tab}")
+		ControlSend($hWnd, "", "", "{tab}")
 		Sleep(500)
-		Send("{enter}")
+		ControlSend($hWnd, "", "", "{Enter}")
 
 ;~ 		muss in log file schreiben
 		$sLogMsg = "Export Procces is started"
@@ -115,7 +129,7 @@ Func export()
 		If $ExError = 3 Then
 
 ;~ 			muss in log file schreiben
-			$sLogMsg = "ExportPage opening  failed 3 times , Script will exit"
+			$sLogMsg = "Script Failed to open ExportPage 3 times , It will exit"
 			_FileWriteLog($sLogPath, $sLogMsg)
 
 			FileClose($sLogPath)
@@ -124,7 +138,7 @@ Func export()
 			$ExError = $ExError + 1
 
 ;~ 		 muss in logfile schreiben
-			$sLogMsg = "ExportPage cant open  Script will try again.....Script tries (" & $ExError & ") times"
+			$sLogMsg = "Script can´t open ImportPage IT will try again...... (" & $ExError & ".) times"
 			_FileWriteLog($sLogPath, $sLogMsg)
 			Sleep(500)
 			export()
