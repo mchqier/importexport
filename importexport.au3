@@ -14,6 +14,7 @@ $sLogPath = FileOpen(@ScriptDir & "\Importexport.log", 1)
 $sLogMsg = "ImportExport Script Started"
 _FileWriteLog($sLogPath, $sLogMsg)
 Import()
+
 $Imreact = WinWait("localhost/gfu2014/Import_Controller/ImportForm", "", 3600)
 If $Imreact Then
 	Sleep(1000)
@@ -60,7 +61,7 @@ Func Import()
 		$sLogMsg = "Import Procces is started"
 		_FileWriteLog($sLogPath, $sLogMsg)
 
-
+		ControlFocus($hWnd,"",1)
 
 	Else
 		If $ImError = 3 Then
@@ -95,9 +96,9 @@ Func export()
 
 
 	Run("cmd /c start http://localhost/gfu2014/export?flush=1", "", @SW_HIDE)
-	Sleep(2000)
+	Sleep(3000)
 
-	Local $hWnd = WinWait("localhost/gfu2014/import?flush=1","",30)
+	Local $hWnd = WinWait("Export GFU-Website","",30)
 
 ;~ 	$hWnd=WinActivate("localhost/gfu2014/Import_Controller/ImportForm")
 ;~ 	Sleep(500)
@@ -138,7 +139,7 @@ Func export()
 			$ExError = $ExError + 1
 
 ;~ 		 muss in logfile schreiben
-			$sLogMsg = "Script can´t open ImportPage IT will try again...... (" & $ExError & ".) times"
+			$sLogMsg = "Script can´t open ExportPage It will try again...... (" & $ExError & ".) times"
 			_FileWriteLog($sLogPath, $sLogMsg)
 			Sleep(500)
 			export()
