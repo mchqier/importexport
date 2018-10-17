@@ -1,7 +1,6 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=C:\Users\user1\Desktop\favicon.ico
 #AutoIt3Wrapper_Outfile=\\nas00\disk\temp\mothnna\importexport.exe
-#AutoIt3Wrapper_Outfile_x64=importexport.exe
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include <ScreenCapture.au3>
 #include <GDIPlus.au3>
@@ -123,6 +122,8 @@ Func export()
 
 ;~ 		muss in log file schreiben
 		$sLogMsg = "Export Procces is started"
+		FileOpen(@DesktopDir & "\Exportstarted", 1)
+
 		_FileWriteLog($sLogPath, $sLogMsg)
 
 
