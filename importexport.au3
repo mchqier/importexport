@@ -14,7 +14,7 @@ $sLogMsg = "ImportExport Script Started"
 _FileWriteLog($sLogPath, $sLogMsg)
 Import()
 
-$Imreact = WinWait("localhost/gfu2014/Import_Controller/ImportForm", "", 3600)
+$Imreact = WinWait("localhost/gfu2014/Import_Controller/ImportForm", "", 7200)
 If $Imreact Then
 	Sleep(1000)
 	export()
